@@ -3,7 +3,8 @@ project(ros_ws281x_vendor)
 
 add_library(rpi_ws281x STATIC "")
 
-if (${CMAKE_SYSTEM_PROCESSOR} STREQUAL "arm")
+message(STATUS "Building for ${CMAKE_SYSTEM_PROCESSOR}")
+if (${CMAKE_SYSTEM_PROCESSOR} STREQUAL "armv7l")
     message(STATUS "Using real rpi_ws281x library")
     target_sources(rpi_ws281x PRIVATE
             rpi_ws281x/dma.c
