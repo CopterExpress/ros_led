@@ -9,6 +9,8 @@
 
 #include <unordered_map>
 
+#include <signal.h>
+
 std::unordered_map<std::string, uint64_t> ws2811Types =
         {
                 {"SK6812_STRIP_RGBW", SK6812_STRIP_RGBW},
@@ -30,6 +32,7 @@ std::unordered_map<std::string, uint64_t> ws2811Types =
 
 
 ws2811_t ledString;
+bool didInitialize = false;
 
 bool setGamma(ros_ws281x::SetGamma::Request& req, ros_ws281x::SetGamma::Response& resp)
 {
@@ -43,10 +46,15 @@ bool setGamma(ros_ws281x::SetGamma::Request& req, ros_ws281x::SetGamma::Response
 
 bool setLeds(ros_ws281x::SetLeds::Request& req, ros_ws281x::SetLeds::Response& resp)
 {
-    int maxLed = std::min(req.colors.size(), (size_t)ledString.channel[0].count);
-    for(int i = 0; i < maxLed; ++i)
+    size_t maxLed = std::min(req.colors.size(), (size_t)ledString.channel[0].count);
+    for(size_t i = 0; i < maxLed; ++i)
     {
-        ledString.channel[0].leds[i] = req.colors[i];
+        auto color = uint32_t(
+                0x00010000 * int(req.colors[i].r) +  // Red channel mask
+                0x00000100 * int(req.colors[i].g) +  // Green channel mask
+                0x00000001 * int(req.colors[i].b) +  // Blue channel mask
+                0x01000000 * int(req.colors[i].a));  // Use alpha for white
+        ledString.channel[0].leds[i] = color;
     }
     ws2811_return_t ret;
     if ((ret = ws2811_render(&ledString)) != WS2811_SUCCESS)
@@ -61,6 +69,20 @@ bool setLeds(ros_ws281x::SetLeds::Request& req, ros_ws281x::SetLeds::Response& r
         resp.message = "";
     }
     return true;
+}
+
+void cleanup(int signal)
+{
+    (void) signal;
+    if (didInitialize)
+    {
+        for(int i = 0; i < ledString.channel[0].count; ++i)
+        {
+            ledString.channel[0].leds[i] = 0;
+            ws2811_render(&ledString);
+        }
+        ws2811_fini(&ledString);
+    }
 }
 
 int main(int argc, char** argv)
@@ -126,6 +148,8 @@ int main(int argc, char** argv)
         ROS_FATAL("[ros_ws281x] native library init failed: %s", ws2811_get_return_t_str(ret));
         exit(1);
     }
+    didInitialize = true;
+    signal(SIGINT, cleanup);
 
     auto srvGamma = nh.advertiseService("set_gamma", setGamma);
     auto srvLeds = nh.advertiseService("set_leds", setLeds);
