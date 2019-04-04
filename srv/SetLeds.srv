@@ -1,4 +1,4 @@
-std_msgs/ColorRGBA[] colors
+LEDStateArray leds
 ---
 bool success
 string message

@@ -11,6 +11,23 @@
 
 #include <signal.h>
 
+constexpr uint32_t LED_RED_SHIFT   = 16;
+constexpr uint32_t LED_GREEN_SHIFT = 8;
+constexpr uint32_t LED_BLUE_SHIFT  = 0;
+constexpr uint32_t LED_WHITE_SHIFT = 24;
+
+constexpr uint32_t LED_RED_MASK   = (0xFF << LED_RED_SHIFT);
+constexpr uint32_t LED_GREEN_MASK = (0xFF << LED_GREEN_SHIFT);
+constexpr uint32_t LED_BLUE_MASK  = (0xFF << LED_BLUE_SHIFT);
+constexpr uint32_t LED_WHITE_MASK = (0xFF << LED_WHITE_SHIFT);
+
+constexpr uint32_t LED_RED   = (0x01 << LED_RED_SHIFT);
+constexpr uint32_t LED_GREEN = (0x01 << LED_GREEN_SHIFT);
+constexpr uint32_t LED_BLUE  = (0x01 << LED_BLUE_SHIFT);
+constexpr uint32_t LED_WHITE = (0x01 << LED_WHITE_SHIFT);
+
+
+
 std::unordered_map<std::string, uint64_t> ws2811Types =
         {
                 {"SK6812_STRIP_RGBW", SK6812_STRIP_RGBW},
@@ -34,6 +51,25 @@ std::unordered_map<std::string, uint64_t> ws2811Types =
 ws2811_t ledString;
 bool didInitialize = false;
 
+ros::Publisher ledStatePublisher;
+
+void publishLedState()
+{
+    ros_ws281x::LEDStateArray stripState;
+    stripState.leds.reserve(ledString.channel[0].count);
+    for(size_t i = 0; i < stripState.leds.size(); ++i)
+    {
+        ros_ws281x::LEDState ledState;
+        ledState.index = i;
+        ledState.color.r = (ledString.channel[0].leds[i] & LED_RED_MASK) >> LED_RED_SHIFT;
+        ledState.color.g = (ledString.channel[0].leds[i] & LED_GREEN_MASK) >> LED_GREEN_SHIFT;
+        ledState.color.b = (ledString.channel[0].leds[i] & LED_BLUE_MASK) >> LED_BLUE_SHIFT;
+        ledState.color.a = (ledString.channel[0].leds[i] & LED_WHITE_MASK) >> LED_WHITE_SHIFT;
+        stripState.leds.push_back(ledState);
+    }
+    ledStatePublisher.publish(stripState);
+}
+
 bool setGamma(ros_ws281x::SetGamma::Request& req, ros_ws281x::SetGamma::Response& resp)
 {
     for(int i = 0; i < 255; ++i)
@@ -46,14 +82,15 @@ bool setGamma(ros_ws281x::SetGamma::Request& req, ros_ws281x::SetGamma::Response
 
 bool setLeds(ros_ws281x::SetLeds::Request& req, ros_ws281x::SetLeds::Response& resp)
 {
-    size_t maxLed = std::min(req.colors.size(), (size_t)ledString.channel[0].count);
+    const auto& colors = req.leds.leds;
+    size_t maxLed = std::min(colors.size(), (size_t)ledString.channel[0].count);
     for(size_t i = 0; i < maxLed; ++i)
     {
         auto color = uint32_t(
-                0x00010000 * int(req.colors[i].r) +  // Red channel mask
-                0x00000100 * int(req.colors[i].g) +  // Green channel mask
-                0x00000001 * int(req.colors[i].b) +  // Blue channel mask
-                0x01000000 * int(req.colors[i].a));  // Use alpha for white
+                LED_RED * int(colors[i].color.r) +  // Red channel mask
+                LED_GREEN * int(colors[i].color.g) +  // Green channel mask
+                LED_BLUE * int(colors[i].color.b) +  // Blue channel mask
+                LED_WHITE * int(colors[i].color.a));  // Use alpha for white
         ledString.channel[0].leds[i] = color;
     }
     ws2811_return_t ret;
@@ -68,6 +105,7 @@ bool setLeds(ros_ws281x::SetLeds::Request& req, ros_ws281x::SetLeds::Response& r
         resp.success = 1;
         resp.message = "";
     }
+    publishLedState();
     return true;
 }
 
@@ -153,6 +191,8 @@ int main(int argc, char** argv)
 
     auto srvGamma = nh.advertiseService("set_gamma", setGamma);
     auto srvLeds = nh.advertiseService("set_leds", setLeds);
+
+    ledStatePublisher = nh.advertise<ros_ws281x::LEDStateArray>("strip_state", 1);
 
     ros::spin();
 
