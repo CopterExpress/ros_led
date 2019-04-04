@@ -3,8 +3,8 @@
         <param name="target_frequency" value="800000"/>
         <param name="gpio_pin" value="21"/>
         <param name="dma" value="10"/>
-        <param name="strip_type" value="WS2811_STRIP_GBR"/>
-        <param name="led_count" value="3"/>
+        <param name="strip_type" value="WS2811_STRIP_GRB"/>
+        <param name="led_count" value="11"/>
         <param name="invert" value="false"/>
         <param name="brightness" value="255"/>
     </node>
