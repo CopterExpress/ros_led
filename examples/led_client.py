@@ -1,7 +1,7 @@
 import rospy
 from ros_ws281x import srv, msg
 
-NUM_LEDS = 11
+NUM_LEDS = 60
 
 setLeds = rospy.ServiceProxy("/led/set_leds", srv.SetLeds, persistent=True)
 
@@ -20,7 +20,7 @@ def fillColor(color, duration):
             led.color.g = color['g'] * currentIntensity
             led.color.b = color['b'] * currentIntensity
             ledMessage.leds.append(led)
-        setLeds(leds = ledMessage)
+        setLeds(leds=ledMessage)
         rospy.sleep(duration / 60.0)
 
 
