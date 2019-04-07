@@ -4,6 +4,8 @@ project(ros_ws281x)
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
 
+option(ROS_WS2811_REAL_LIB "Use real ws281x library instead of the mock one" OFF)
+
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
