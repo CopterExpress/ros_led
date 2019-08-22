@@ -167,7 +167,8 @@ int main(int argc, char** argv)
 	auto srv_gamma = nh.advertiseService("set_gamma", setGamma);
 	auto srv_leds = nh.advertiseService("set_leds", setLeds);
 
-	led_state_pub = nh.advertise<led_msgs::LEDStateArray>("strip_state", 1);
+	led_state_pub = nh.advertise<led_msgs::LEDStateArray>("strip_state", 1, true);
+	publishLedState();
 
 	ros::spin();
 
