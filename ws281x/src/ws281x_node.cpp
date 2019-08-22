@@ -164,10 +164,10 @@ int main(int argc, char** argv)
 
 	strip_state.leds.resize(param_led_count);
 
-	auto srv_gamma = nh.advertiseService("set_gamma", setGamma);
-	auto srv_leds = nh.advertiseService("set_leds", setLeds);
+	auto srv_gamma = nh_priv.advertiseService("set_gamma", setGamma);
+	auto srv_leds = nh_priv.advertiseService("set_leds", setLeds);
 
-	led_state_pub = nh.advertise<led_msgs::LEDStateArray>("strip_state", 1, true);
+	led_state_pub = nh_priv.advertise<led_msgs::LEDStateArray>("state", 1, true);
 	publishLedState();
 
 	ros::spin();
