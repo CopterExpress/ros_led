@@ -1,12 +1,13 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>ros_ws281x</name>
+  <name>ws281x</name>
   <version>0.0.2</version>
-  <description>ROS node for rpi_ws281x LED stSrip driver</description>
+  <description>ROS node for rpi_ws281x LED strip driver</description>
   <maintainer email="sfalexrog@gmail.com">sfalexrog</maintainer>
+  <maintainer email="okalachev@gmail.com">Oleg Kalachev</maintainer>
   <license>MIT</license>
 
-  <!-- <url type="website">http://github.com/sfalexrog/ros_ws281x</url> -->
+  <url type="website">https://github.com/CopterExpress/ros_led</url>
 
   <!-- <author email="jane.doe@example.com">Jane Doe</author> -->
 

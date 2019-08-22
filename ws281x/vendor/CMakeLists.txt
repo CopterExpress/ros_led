@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.1)
-project(ros_ws281x_vendor)
+project(ws281x_vendor)
 
 add_library(rpi_ws281x STATIC "")
 
