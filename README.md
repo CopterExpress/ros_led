@@ -6,6 +6,8 @@ Common messages for LEDs.
 
 ## ros_ws281x package
 
+ws281x LED strip driver for ROS.
+
 ### Running without root permissions
 
 To allow running the node without root permissions set the *[setuid](https://en.wikipedia.org/wiki/Setuid)* bit to the executable:
