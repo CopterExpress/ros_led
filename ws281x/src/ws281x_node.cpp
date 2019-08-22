@@ -48,20 +48,18 @@ std::unordered_map<std::string, uint64_t> ws2811_types = {
 ws2811_t led_string;
 
 ros::Publisher led_state_pub;
+led_msgs::LEDStateArray strip_state;
 
 void publishLedState()
 {
-	led_msgs::LEDStateArray strip_state;
-	strip_state.leds.reserve(led_string.channel[0].count);
 	for(size_t i = 0; i < strip_state.leds.size(); ++i) {
-		led_msgs::LEDState led_state;
-		led_state.index = i;
-		led_state.r = (led_string.channel[0].leds[i] & LED_RED_MASK) >> LED_RED_SHIFT;
-		led_state.g = (led_string.channel[0].leds[i] & LED_GREEN_MASK) >> LED_GREEN_SHIFT;
-		led_state.b = (led_string.channel[0].leds[i] & LED_BLUE_MASK) >> LED_BLUE_SHIFT;
+		strip_state.leds[i].index = i;
+		strip_state.leds[i].r = (led_string.channel[0].leds[i] & LED_RED_MASK) >> LED_RED_SHIFT;
+		strip_state.leds[i].g = (led_string.channel[0].leds[i] & LED_GREEN_MASK) >> LED_GREEN_SHIFT;
+		strip_state.leds[i].b = (led_string.channel[0].leds[i] & LED_BLUE_MASK) >> LED_BLUE_SHIFT;
 		// led_state.w = (led_string.channel[0].leds[i] & LED_WHITE_MASK) >> LED_WHITE_SHIFT;
-		strip_state.leds.push_back(led_state);
 	}
+
 	led_state_pub.publish(strip_state);
 }
 
@@ -163,6 +161,8 @@ int main(int argc, char** argv)
 		exit(1);
 	}
 	signal(SIGINT, cleanup);
+
+	strip_state.leds.resize(param_led_count);
 
 	auto srv_gamma = nh.advertiseService("set_gamma", setGamma);
 	auto srv_leds = nh.advertiseService("set_leds", setLeds);
