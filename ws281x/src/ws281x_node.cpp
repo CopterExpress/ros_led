@@ -74,6 +74,15 @@ bool setGamma(ws281x::SetGamma::Request& req, ws281x::SetGamma::Response& resp)
 
 bool setLeds(led_msgs::SetLEDs::Request& req, led_msgs::SetLEDs::Response& resp)
 {
+	// check validness
+	for(auto const& led : req.leds) {
+		if (led.index < 0 || led.index >= strip_state.leds.size()) {
+			ROS_ERROR("[ws281x] LED index out of bounds: %d", led.index);
+			resp.message = "LED index out of bounds: " + std::to_string(led.index);
+			return true;
+		}
+	}
+
 	for(auto const& led : req.leds) {
 		auto color = uint32_t(
 			LED_RED * int(led.r) +  // Red channel mask
