@@ -46,7 +46,6 @@ std::unordered_map<std::string, uint64_t> ws2811_types = {
 
 
 ws2811_t led_string;
-bool did_initialize = false;
 
 ros::Publisher led_state_pub;
 
@@ -100,13 +99,11 @@ bool setLeds(led_msgs::SetLEDs::Request& req, led_msgs::SetLEDs::Response& resp)
 void cleanup(int signal)
 {
 	(void) signal;
-	if (did_initialize) {
-		for(int i = 0; i < led_string.channel[0].count; ++i) {
-			led_string.channel[0].leds[i] = 0;
-			ws2811_render(&led_string);
-		}
-		ws2811_fini(&led_string);
+	for(int i = 0; i < led_string.channel[0].count; ++i) {
+		led_string.channel[0].leds[i] = 0;
+		ws2811_render(&led_string);
 	}
+	ws2811_fini(&led_string);
 }
 
 int main(int argc, char** argv)
@@ -165,7 +162,6 @@ int main(int argc, char** argv)
 		ROS_FATAL("[ws281x] native library init failed: %s", ws2811_get_return_t_str(ret));
 		exit(1);
 	}
-	did_initialize = true;
 	signal(SIGINT, cleanup);
 
 	auto srv_gamma = nh.advertiseService("set_gamma", setGamma);
