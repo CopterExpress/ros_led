@@ -1,0 +1,4 @@
+LEDState[] leds
+---
+bool success
+string message
