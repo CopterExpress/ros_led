@@ -1,4 +1,0 @@
-LEDStateArray leds
----
-bool success
-string message
