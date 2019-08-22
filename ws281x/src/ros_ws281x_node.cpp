@@ -4,11 +4,8 @@
 #include <ros_ws281x/SetLeds.h>
 
 #include <ws2811.h>
-
 #include <ros/console.h>
-
 #include <unordered_map>
-
 #include <signal.h>
 
 constexpr uint32_t LED_RED_SHIFT   = 16;
@@ -28,173 +25,157 @@ constexpr uint32_t LED_WHITE = (0x01 << LED_WHITE_SHIFT);
 
 
 
-std::unordered_map<std::string, uint64_t> ws2811Types =
-        {
-                {"SK6812_STRIP_RGBW", SK6812_STRIP_RGBW},
-                {"SK6812_STRIP_RBGW", SK6812_STRIP_RBGW},
-                {"SK6812_STRIP_GRBW", SK6812_STRIP_GRBW},
-                {"SK6812_STRIP_GBRW", SK6812_STRIP_GBRW},
-                {"SK6812_STRIP_BRGW", SK6812_STRIP_BRGW},
-                {"SK6812_STRIP_BGRW", SK6812_STRIP_BGRW},
-                {"WS2811_STRIP_RGB", WS2811_STRIP_RGB},
-                {"WS2811_STRIP_RBG", WS2811_STRIP_RBG},
-                {"WS2811_STRIP_GRB", WS2811_STRIP_GRB},
-                {"WS2811_STRIP_GBR", WS2811_STRIP_GBR},
-                {"WS2811_STRIP_BRG", WS2811_STRIP_BRG},
-                {"WS2811_STRIP_BGR", WS2811_STRIP_BGR},
-                {"WS2812_STRIP", WS2812_STRIP},
-                {"SK6812_STRIP", SK6812_STRIP},
-                {"SK6812W_STRIP", SK6812W_STRIP}
-        };
+std::unordered_map<std::string, uint64_t> ws2811_types = {
+	{"SK6812_STRIP_RGBW", SK6812_STRIP_RGBW},
+	{"SK6812_STRIP_RBGW", SK6812_STRIP_RBGW},
+	{"SK6812_STRIP_GRBW", SK6812_STRIP_GRBW},
+	{"SK6812_STRIP_GBRW", SK6812_STRIP_GBRW},
+	{"SK6812_STRIP_BRGW", SK6812_STRIP_BRGW},
+	{"SK6812_STRIP_BGRW", SK6812_STRIP_BGRW},
+	{"WS2811_STRIP_RGB", WS2811_STRIP_RGB},
+	{"WS2811_STRIP_RBG", WS2811_STRIP_RBG},
+	{"WS2811_STRIP_GRB", WS2811_STRIP_GRB},
+	{"WS2811_STRIP_GBR", WS2811_STRIP_GBR},
+	{"WS2811_STRIP_BRG", WS2811_STRIP_BRG},
+	{"WS2811_STRIP_BGR", WS2811_STRIP_BGR},
+	{"WS2812_STRIP", WS2812_STRIP},
+	{"SK6812_STRIP", SK6812_STRIP},
+	{"SK6812W_STRIP", SK6812W_STRIP}
+};
 
 
-ws2811_t ledString;
-bool didInitialize = false;
+ws2811_t led_string;
+bool did_initialize = false;
 
-ros::Publisher ledStatePublisher;
+ros::Publisher led_state_pub;
 
 void publishLedState()
 {
-    ros_ws281x::LEDStateArray stripState;
-    stripState.leds.reserve(ledString.channel[0].count);
-    for(size_t i = 0; i < stripState.leds.size(); ++i)
-    {
-        ros_ws281x::LEDState ledState;
-        ledState.index = i;
-        ledState.color.r = (ledString.channel[0].leds[i] & LED_RED_MASK) >> LED_RED_SHIFT;
-        ledState.color.g = (ledString.channel[0].leds[i] & LED_GREEN_MASK) >> LED_GREEN_SHIFT;
-        ledState.color.b = (ledString.channel[0].leds[i] & LED_BLUE_MASK) >> LED_BLUE_SHIFT;
-        ledState.color.a = (ledString.channel[0].leds[i] & LED_WHITE_MASK) >> LED_WHITE_SHIFT;
-        stripState.leds.push_back(ledState);
-    }
-    ledStatePublisher.publish(stripState);
+	ros_ws281x::LEDStateArray strip_state;
+	strip_state.leds.reserve(led_string.channel[0].count);
+	for(size_t i = 0; i < strip_state.leds.size(); ++i) {
+		ros_ws281x::LEDState led_state;
+		led_state.index = i;
+		led_state.color.r = (led_string.channel[0].leds[i] & LED_RED_MASK) >> LED_RED_SHIFT;
+		led_state.color.g = (led_string.channel[0].leds[i] & LED_GREEN_MASK) >> LED_GREEN_SHIFT;
+		led_state.color.b = (led_string.channel[0].leds[i] & LED_BLUE_MASK) >> LED_BLUE_SHIFT;
+		led_state.color.a = (led_string.channel[0].leds[i] & LED_WHITE_MASK) >> LED_WHITE_SHIFT;
+		strip_state.leds.push_back(led_state);
+	}
+	led_state_pub.publish(strip_state);
 }
 
 bool setGamma(ros_ws281x::SetGamma::Request& req, ros_ws281x::SetGamma::Response& resp)
 {
-    for(int i = 0; i < 255; ++i)
-    {
-        ledString.channel[0].gamma[i] = req.gamma[i];
-    }
-    resp.success = 1;
-    return true;
+	for(int i = 0; i < 255; ++i) {
+		led_string.channel[0].gamma[i] = req.gamma[i];
+	}
+	resp.success = 1;
+	return true;
 }
 
 bool setLeds(ros_ws281x::SetLeds::Request& req, ros_ws281x::SetLeds::Response& resp)
 {
-    const auto& colors = req.leds.leds;
-    size_t maxLed = std::min(colors.size(), (size_t)ledString.channel[0].count);
-    for(size_t i = 0; i < maxLed; ++i)
-    {
-        auto color = uint32_t(
-                LED_RED * int(colors[i].color.r) +  // Red channel mask
-                LED_GREEN * int(colors[i].color.g) +  // Green channel mask
-                LED_BLUE * int(colors[i].color.b) +  // Blue channel mask
-                LED_WHITE * int(colors[i].color.a));  // Use alpha for white
-        ledString.channel[0].leds[i] = color;
-    }
-    ws2811_return_t ret;
-    if ((ret = ws2811_render(&ledString)) != WS2811_SUCCESS)
-    {
-        resp.message = ws2811_get_return_t_str(ret);
-        ROS_ERROR_THROTTLE(1, "[ros_ws281x] Could not set LED colors: %s", resp.message.c_str());
-        resp.success = 0;
-    }
-    else
-    {
-        resp.success = 1;
-        resp.message = "";
-    }
-    publishLedState();
-    return true;
+	const auto& colors = req.leds.leds;
+	size_t max_led = std::min(colors.size(), (size_t)led_string.channel[0].count);
+	for(size_t i = 0; i < max_led; ++i) {
+		auto color = uint32_t(
+			LED_RED * int(colors[i].color.r) +  // Red channel mask
+			LED_GREEN * int(colors[i].color.g) +  // Green channel mask
+			LED_BLUE * int(colors[i].color.b) +  // Blue channel mask
+			LED_WHITE * int(colors[i].color.a));  // Use alpha for white
+		led_string.channel[0].leds[i] = color;
+	}
+	ws2811_return_t ret;
+	if ((ret = ws2811_render(&led_string)) != WS2811_SUCCESS) {
+		resp.message = ws2811_get_return_t_str(ret);
+		ROS_ERROR_THROTTLE(1, "[ros_ws281x] Could not set LED colors: %s", resp.message.c_str());
+		resp.success = 0;
+	} else {
+		resp.success = 1;
+		resp.message = "";
+	}
+	publishLedState();
+	return true;
 }
 
 void cleanup(int signal)
 {
-    (void) signal;
-    if (didInitialize)
-    {
-        for(int i = 0; i < ledString.channel[0].count; ++i)
-        {
-            ledString.channel[0].leds[i] = 0;
-            ws2811_render(&ledString);
-        }
-        ws2811_fini(&ledString);
-    }
+	(void) signal;
+	if (did_initialize) {
+		for(int i = 0; i < led_string.channel[0].count; ++i) {
+			led_string.channel[0].leds[i] = 0;
+			ws2811_render(&led_string);
+		}
+		ws2811_fini(&led_string);
+	}
 }
 
 int main(int argc, char** argv)
 {
-    ros::init(argc, argv, "ros_ws281x");
-    ros::NodeHandle nh, nh_priv("~");
+	ros::init(argc, argv, "ros_ws281x");
+	ros::NodeHandle nh, nh_priv("~");
 
-    int paramFreq;
-    int paramPin;
-    int paramDma;
-    uint64_t paramStripType;
-    int paramLedCount;
-    bool paramInvert;
-    int paramBrightness;
+	int param_freq;
+	int param_pin;
+	int param_dma;
+	uint64_t param_strip_type;
+	int param_led_count;
+	bool param_invert;
+	int param_brightness;
 
-    nh_priv.param("target_frequency", paramFreq, WS2811_TARGET_FREQ);
-    nh_priv.param("gpio_pin", paramPin, 21);
-    nh_priv.param("dma", paramDma, 10);
+	nh_priv.param("target_frequency", param_freq, WS2811_TARGET_FREQ);
+	nh_priv.param("gpio_pin", param_pin, 21);
+	nh_priv.param("dma", param_dma, 10);
 
-    std::string stripTypeStr;
-    nh_priv.param("strip_type", stripTypeStr, std::string("WS2811_STRIP_GBR"));
-    nh_priv.param("led_count", paramLedCount, 30);
-    nh_priv.param("invert", paramInvert, false);
-    nh_priv.param("brightness", paramBrightness, 255);
+	std::string strip_type_str;
+	nh_priv.param("strip_type", strip_type_str, std::string("WS2811_STRIP_GBR"));
+	nh_priv.param("led_count", param_led_count, 30);
+	nh_priv.param("invert", param_invert, false);
+	nh_priv.param("brightness", param_brightness, 255);
 
-    auto stripTypeIt = ws2811Types.find(stripTypeStr);
-    if (stripTypeIt != ws2811Types.end())
-    {
-        paramStripType = stripTypeIt->second;
-    }
-    else
-    {
-        ROS_WARN("[ros_ws281x] Unknown strip type: %s", stripTypeStr.c_str());
-        paramStripType = WS2811_STRIP_GBR;
-    }
+	auto strip_type_it = ws2811_types.find(strip_type_str);
+	if (strip_type_it != ws2811_types.end()) {
+		param_strip_type = strip_type_it->second;
+	} else {
+		ROS_WARN("[ros_ws281x] Unknown strip type: %s", strip_type_str.c_str());
+		param_strip_type = WS2811_STRIP_GBR;
+	}
 
-    if (paramFreq < 0)
-    {
-        ROS_WARN("[ros_ws281x] Target_frequency out of range, resetting to default");
-        ledString.freq = (uint32_t)WS2811_TARGET_FREQ;
-    }
-    else
-    {
-        ledString.freq = (uint32_t)paramFreq;
-    }
+	if (param_freq < 0) {
+		ROS_WARN("[ros_ws281x] Target_frequency out of range, resetting to default");
+		led_string.freq = (uint32_t)WS2811_TARGET_FREQ;
+	} else {
+		led_string.freq = (uint32_t)param_freq;
+	}
 
-    ledString.dmanum = paramDma;
-    ledString.channel[0].gpionum = paramPin;
-    ledString.channel[0].count = paramLedCount;
-    ledString.channel[0].invert = paramInvert ? (1) : (0);
-    ledString.channel[0].brightness = (uint8_t)paramBrightness;
-    ledString.channel[0].strip_type = (int)paramStripType;
+	led_string.dmanum = param_dma;
+	led_string.channel[0].gpionum = param_pin;
+	led_string.channel[0].count = param_led_count;
+	led_string.channel[0].invert = param_invert ? (1) : (0);
+	led_string.channel[0].brightness = (uint8_t)param_brightness;
+	led_string.channel[0].strip_type = (int)param_strip_type;
 
-    // Disable second channel for now
-    ledString.channel[1].gpionum = 0;
-    ledString.channel[1].count = 0;
-    ledString.channel[1].invert = 0;
-    ledString.channel[1].brightness = 0;
+	// Disable second channel for now
+	led_string.channel[1].gpionum = 0;
+	led_string.channel[1].count = 0;
+	led_string.channel[1].invert = 0;
+	led_string.channel[1].brightness = 0;
 
-    ws2811_return_t ret;
-    if ((ret = ws2811_init(&ledString)) != WS2811_SUCCESS)
-    {
-        ROS_FATAL("[ros_ws281x] native library init failed: %s", ws2811_get_return_t_str(ret));
-        exit(1);
-    }
-    didInitialize = true;
-    signal(SIGINT, cleanup);
+	ws2811_return_t ret;
+	if ((ret = ws2811_init(&led_string)) != WS2811_SUCCESS) {
+		ROS_FATAL("[ros_ws281x] native library init failed: %s", ws2811_get_return_t_str(ret));
+		exit(1);
+	}
+	did_initialize = true;
+	signal(SIGINT, cleanup);
 
-    auto srvGamma = nh.advertiseService("set_gamma", setGamma);
-    auto srvLeds = nh.advertiseService("set_leds", setLeds);
+	auto srv_gamma = nh.advertiseService("set_gamma", setGamma);
+	auto srv_leds = nh.advertiseService("set_leds", setLeds);
 
-    ledStatePublisher = nh.advertise<ros_ws281x::LEDStateArray>("strip_state", 1);
+	led_state_pub = nh.advertise<ros_ws281x::LEDStateArray>("strip_state", 1);
 
-    ros::spin();
+	ros::spin();
 
-    return 0;
+	return 0;
 }
