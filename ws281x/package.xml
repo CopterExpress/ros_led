@@ -37,5 +37,6 @@
   <build_depend>roscpp</build_depend>
   <build_export_depend>roscpp</build_export_depend>
   <exec_depend>roscpp</exec_depend>
+  <depend>led_msgs</depend>
 
 </package>
