@@ -5,24 +5,33 @@
 
 import sys
 import rospy
+from led_msgs.msg import LEDState, LEDStateArray
 from led_msgs.srv import SetLED, SetLEDs
 
 
 rospy.init_node('led')
 led_count = rospy.get_param('~led_count', 30)
-state = [{'r': 0, 'g': 0, 'b': 0}] * led_count
+state_pub = rospy.Publisher('~state', LEDStateArray, queue_size=1, latch=True)
+# create initial state
+state = LEDStateArray([LEDState(index=index) for index in range(led_count)])
 
 
 def set_led(req):
-    state[req.index] = {'r': int(req.r), 'g': int(req.g), 'b': int(req.b)}
+    state.leds[req.index].r = int(req.r)
+    state.leds[req.index].g = int(req.g)
+    state.leds[req.index].b = int(req.b)
     print_led()
+    state_pub.publish(state)
     return {'success': True}
 
 
 def set_leds(req):
     for led in req.leds:
-        state[led.index] = {'r': int(led.r), 'g': int(led.g), 'b': int(led.b)}
+        state.leds[led.index].r = int(led.r)
+        state.leds[led.index].g = int(led.g)
+        state.leds[led.index].b = int(led.b)
     print_led()
+    state_pub.publish(state)
     return {'success': True}
 
 
@@ -32,11 +41,12 @@ rospy.Service('~set_leds', SetLEDs, set_leds)
 
 def print_led():
     s = ''
-    for led in state:
-        s += '\033[48;2;{};{};{}m '.format(led['r'], led['g'], led['b'])
+    for led in state.leds:
+        s += '\033[48;2;{};{};{}m '.format(led.r, led.g, led.b)
     sys.stdout.write('\r{}\033[0m'.format(s))
     sys.stdout.flush()
 
 
 print_led()
+state_pub.publish(state)
 rospy.spin()
