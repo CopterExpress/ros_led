@@ -5,7 +5,7 @@
 
 import sys
 import rospy
-from led_msgs.srv import SetLed, SetLeds
+from led_msgs.srv import SetLED, SetLEDs
 
 
 rospy.init_node('led')
@@ -26,8 +26,8 @@ def set_leds(req):
     return {'success': True}
 
 
-rospy.Service('~set_led', SetLed, set_led)
-rospy.Service('~set_leds', SetLeds, set_leds)
+rospy.Service('~set_led', SetLED, set_led)
+rospy.Service('~set_leds', SetLEDs, set_leds)
 
 
 def print_led():
