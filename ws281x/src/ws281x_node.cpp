@@ -111,6 +111,7 @@ void cleanup(int signal)
 		ws2811_render(&led_string);
 	}
 	ws2811_fini(&led_string);
+	ros::shutdown();
 }
 
 int main(int argc, char** argv)
