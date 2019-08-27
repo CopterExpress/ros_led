@@ -12,6 +12,7 @@ option(ROS_WS2811_REAL_LIB "Use real ws281x library instead of the mock one" OFF
 find_package(catkin REQUIRED COMPONENTS
   message_generation
   roscpp
+  led_msgs
 )
 
 ## System dependencies are found with CMake's conventions
@@ -103,7 +104,7 @@ generate_messages(
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES ros_ws281x
-#  CATKIN_DEPENDS message_generation roscpp
+  CATKIN_DEPENDS message_generation roscpp led_msgs
 #  DEPENDS system_lib
 )
 
@@ -149,7 +150,7 @@ add_dependencies(${PROJECT_NAME}_node ${PROJECT_NAME}_generate_messages_cpp)
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
-# add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(${PROJECT_NAME}_node
