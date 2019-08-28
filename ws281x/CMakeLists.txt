@@ -191,6 +191,21 @@ install(FILES
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
 )
 
+# Prepare node for packaging
+# FIXME: better checks for packaging?
+if(${CATKIN_BUILD_BINARY_PACKAGE} EQUAL "1")
+  message(STATUS "Building for ROS distro: $ENV{ROS_DISTRO}")
+  set(ROSDISTRO $ENV{ROS_DISTRO})
+
+  configure_file(scripts/postinst.in postinst)
+
+  install(FILES
+    ${CMAKE_CURRENT_BINARY_DIR}/postinst
+    DESTINATION /DEBIAN
+    PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
+  )
+endif()
+
 #############
 ## Testing ##
 #############
