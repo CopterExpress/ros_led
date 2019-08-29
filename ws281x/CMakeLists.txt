@@ -157,6 +157,9 @@ target_link_libraries(${PROJECT_NAME}_node
   ${catkin_LIBRARIES}
 )
 
+# Since we're using SUID bits, we need to leave rpath in for stripped binaries
+set_target_properties(${PROJECT_NAME}_node PROPERTIES INSTALL_RPATH_USE_LINK_PATH TRUE)
+
 #############
 ## Install ##
 #############
