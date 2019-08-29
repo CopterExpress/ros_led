@@ -193,7 +193,7 @@ install(FILES
 
 # Prepare node for packaging
 # FIXME: better checks for packaging?
-if(${CATKIN_BUILD_BINARY_PACKAGE} EQUAL "1")
+if("${CATKIN_BUILD_BINARY_PACKAGE}" EQUAL "1")
   message(STATUS "Building for ROS distro: $ENV{ROS_DISTRO}")
   set(ROSDISTRO $ENV{ROS_DISTRO})
 
