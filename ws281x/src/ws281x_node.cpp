@@ -171,6 +171,7 @@ int main(int argc, char** argv)
 		exit(1);
 	}
 	signal(SIGINT, cleanup);
+	signal(SIGTERM, cleanup);
 
 	strip_state.leds.resize(param_led_count);
 
