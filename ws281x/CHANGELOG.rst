@@ -2,6 +2,10 @@
 Changelog for package ws281x
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.0.5 (2019-11-14)
+------------------
+* Shut LED strip down on TERM signal
+
 0.0.4 (2019-08-29)
 ------------------
 * Prevent CMake from stripping rpath
