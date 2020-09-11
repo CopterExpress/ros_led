@@ -2,6 +2,11 @@
 Changelog for package ws281x
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.0.7 (2020-09-11)
+------------------
+* Update native library
+* Fix 64-bit checks
+
 0.0.6 (2020-02-05)
 ------------------
 * Update native library
