@@ -2,6 +2,10 @@
 Changelog for package ws281x
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.0.8 (2021-01-28)
+------------------
+* Update native library
+
 0.0.7 (2020-09-11)
 ------------------
 * Update native library
