@@ -6,6 +6,7 @@
   <maintainer email="sfalexrog@gmail.com">sfalexrog</maintainer>
   <maintainer email="okalachev@gmail.com">Oleg Kalachev</maintainer>
   <license>MIT</license>
+  <license>BSD</license>
 
   <url type="website">https://github.com/CopterExpress/ros_led</url>
 
