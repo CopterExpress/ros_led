@@ -3,15 +3,14 @@
   <name>ws281x</name>
   <version>0.0.9</version>
   <description>ROS node for rpi_ws281x LED strip driver</description>
-  <maintainer email="sfalexrog@gmail.com">sfalexrog</maintainer>
   <maintainer email="okalachev@gmail.com">Oleg Kalachev</maintainer>
   <license>MIT</license>
   <license>BSD</license>
 
   <url type="website">https://github.com/CopterExpress/ros_led</url>
 
-  <!-- <author email="jane.doe@example.com">Jane Doe</author> -->
-
+  <author email="sfalexrog@gmail.com">Alexey Rogachevskiy</author>
+  <author email="okalachev@gmail.com">Oleg Kalachev</author>
 
   <!-- The *depend tags are used to specify dependencies -->
   <!-- Dependencies can be catkin packages or system dependencies -->
