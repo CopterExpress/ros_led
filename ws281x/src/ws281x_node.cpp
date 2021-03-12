@@ -1,3 +1,14 @@
+/*
+ * ws281x LED strip ROS driver
+ * Copyright (C) 2019 Copter Express Technologies
+ *
+ * Authors: Alexey Rogachevskiy <sfalexrog@gmail.com>, Oleg Kalachev <okalachev@gmail.com>
+ *
+ * Distributed under MIT License (available at https://opensource.org/licenses/MIT).
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ */
+
 #include <ros/ros.h>
 
 #include <led_msgs/SetLEDs.h>
