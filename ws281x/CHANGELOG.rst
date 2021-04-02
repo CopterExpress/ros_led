@@ -2,6 +2,10 @@
 Changelog for package ws281x
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.0.10 (2021-04-02)
+-------------------
+* Update native library
+
 0.0.9 (2021-01-28)
 ------------------
 * Restore lost rpi_ws281x library files
