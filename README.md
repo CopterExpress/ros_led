@@ -16,3 +16,7 @@ To allow running the node without root permissions set the [`setuid`](https://en
 sudo chown root:root $(catkin_find ws281x ws281x_node)
 sudo chmod +s $(catkin_find ws281x ws281x_node)
 ```
+
+## Additional information
+
+These packages are used in [Clover drone ROS platform](https://github.com/CopterExpress/clover). Read more in the [Clover documentation](https://clover.coex.tech/en/leds.html).
