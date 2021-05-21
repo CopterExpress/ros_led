@@ -2,6 +2,10 @@
 Changelog for package led_msgs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Version bump
+
 0.0.10 (2021-04-02)
 -------------------
 * Version bump
