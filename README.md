@@ -1,6 +1,6 @@
-## LED STRIP WS2812 WITH RASPI 4(tested on ROS Noetic)
-# Branch Channel-0 is the default forked branch which works best for channel 0 GPIOs
-# Branch Channel-1 is the modified branch for channel 1 GPIOs(13, 19, 41, 45 or 53)
+# LED STRIP WS2812 WITH RASPI 4(tested on ROS Noetic)
+## Branch Channel-0 is the default forked branch which works best for channel 0 GPIOs
+## Branch Channel-1 is the modified branch for channel 1 GPIOs(13, 19, 41, 45 or 53)
 
 Install the library from source:
 
@@ -34,7 +34,7 @@ sudo chmod +s $(catkin_find ws281x ws281x_node)
 roslaunch ws281x example.launch
 ```
 
-# IN CASE OF THESE ERRORS:
+## IN CASE OF THESE ERRORS:
 
 error while loading shared libraries: librosconsole_log4cxx.so: cannot open shared object file: No such file or directory
 error while loading shared libraries: libxmlrpcpp.so: cannot open shared object file: No such file or directory
@@ -46,7 +46,7 @@ sudo /sbin/ldconfig -v
 sudo ldconfig
 sudo reboot
 ```
-# IN CASE YOU GET THIS:
+## IN CASE YOU GET THIS:
 ```
 Gpio 13 is illegal for LED channel 0
 [ws281x] native library init failed: Selected GPIO not possible
