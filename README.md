@@ -22,7 +22,9 @@ sudo python3 strandtest.py (make sure this is working)
 
 cd ~/catkin_ws/src
 clone https://github.com/CopterExpress/ros_led.git
-cd ../
+cd ros_led
+git checkout channel-1
+cd ../../
 catkin_make -DCMAKE_BUILD_TYPE=Release
 
 source ~/.bashrc (hope your bashrc has correct path to setup files)
