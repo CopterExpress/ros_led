@@ -1,6 +1,6 @@
 ## LED STRIP WS2812 WITH RASPI 4(tested on ROS Noetic)
-This Fork is for GPIOS 13, 19, 41, 45 or 53(channel 1)
-The default repo works best for channel 0
+Branch Channel-0 is the default forked branch which works best for channel 0 GPIOs
+Branch Channel-1 is the modified branch for channel 1 GPIOs(13, 19, 41, 45 or 53)
 
 Install the library from source:
 
