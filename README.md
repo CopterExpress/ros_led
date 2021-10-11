@@ -12,13 +12,14 @@ NOTE: Make sure you do all the configuration in this section(https://github.com/
 
 ``
 cd /rpi_ws281x/examples/
+
 gedit strandtest.py
 ``
 
 ``NOTE: Set correct parameters(LED_PIN, LED_COUNT, LED_CHANNEL) in the file.``
-
-`sudo python3 strandtest.py (make sure this is working)`
 ```
+sudo python3 strandtest.py (make sure this is working)
+
 cd ~/catkin_ws/src
 clone https://github.com/CopterExpress/ros_led.git
 cd ../
