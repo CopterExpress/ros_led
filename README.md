@@ -10,11 +10,11 @@ https://github.com/jgarff/rpi_ws281x
 
 NOTE: Make sure you do all the configuration in this section(https://github.com/jgarff/rpi_ws281x#limitations) for PWM/PCM/SPI type GPIO(only tested on pin 13)
 
-``
+```
 cd /rpi_ws281x/examples/
 
 gedit strandtest.py
-``
+```
 
 ``NOTE: Set correct parameters(LED_PIN, LED_COUNT, LED_CHANNEL) in the file.``
 ```
