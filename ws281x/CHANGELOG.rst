@@ -2,6 +2,10 @@
 Changelog for package ws281x
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.0.12 (2022-01-25)
+-------------------
+* Update native library
+
 0.0.11 (2021-05-21)
 -------------------
 * Added ros_environment build dependency
