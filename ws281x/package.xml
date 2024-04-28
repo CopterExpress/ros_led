@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="2">
   <name>ws281x</name>
-  <version>0.0.13</version>
+  <version>0.0.14</version>
   <description>ROS node for rpi_ws281x LED strip driver</description>
   <maintainer email="okalachev@gmail.com">Oleg Kalachev</maintainer>
   <license>MIT</license>

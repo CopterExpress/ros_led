@@ -2,6 +2,11 @@
 Changelog for package ws281x
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.0.14 (2024-05-28)
+-------------------
+* Fix building with newer CMake
+* Fix issue with version file
+
 0.0.13 (2022-06-14)
 -------------------
 * Update native library
