@@ -2,10 +2,13 @@
 Changelog for package led_msgs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.0.15 (2024-05-28)
+-------------------
+* Version bump
+
 0.0.14 (2024-05-28)
 -------------------
-* Fix building with newer CMake
-* Fix issue with version file
+* Version bump
 
 0.0.13 (2022-06-14)
 -------------------
